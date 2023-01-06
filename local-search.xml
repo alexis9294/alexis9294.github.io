@@ -4,6 +4,27 @@
   
   
   <entry>
+    <title>使用Socket进行数据传输的一个例子</title>
+    <link href="/2023/01/06/%E4%BD%BF%E7%94%A8Socket%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90/"/>
+    <url>/2023/01/06/%E4%BD%BF%E7%94%A8Socket%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90/</url>
+    
+    <content type="html"><![CDATA[<p>该例子会创建Server和Client两个类, 一个代表服务器, 一个代表客户端. 客户端将会把用户键入的内容发送给服务端. </p><div class="note note-info">            <p>需先运行Server类再运行Client类</p>          </div><p>下面是Server类: </p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.io.BufferedReader;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.InputStreamReader;<br><span class="hljs-keyword">import</span> java.net.ServerSocket;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Server</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-keyword">try</span> (<span class="hljs-type">ServerSocket</span> <span class="hljs-variable">serverSocket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(<span class="hljs-number">8080</span>)) &#123; <span class="hljs-comment">// 构造函数传入端口号</span><br>            System.out.println(<span class="hljs-string">&quot;正在等待客户端连接......&quot;</span>);<br>            <span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> serverSocket.accept(); <span class="hljs-comment">// 这里会阻塞线程, 直到有客户端连接上</span><br>            System.out.println(<span class="hljs-string">&quot;客户端已连接&quot;</span>);<br>            System.out.println(<span class="hljs-string">&quot;接收到的数据:&quot;</span>);<br>            <span class="hljs-type">BufferedReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InputStreamReader</span>(socket.getInputStream()));<br>            System.out.println(reader.readLine());<br>            socket.close();<br>        &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><p>下面是Client类: </p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.io.OutputStreamWriter;<br><span class="hljs-keyword">import</span> java.net.Socket;<br><span class="hljs-keyword">import</span> java.util.Scanner;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-keyword">try</span> (<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">8080</span>); <span class="hljs-comment">// 第一个参数为要连接的服务器的地址, 第二个参数为端口号</span><br>             <span class="hljs-type">Scanner</span> <span class="hljs-variable">scanner</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Scanner</span>(System.in)) &#123;<br>            System.out.println(<span class="hljs-string">&quot;已连接到服务器, 请键入需要发送的内容: &quot;</span>);<br>            <span class="hljs-type">OutputStreamWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OutputStreamWriter</span>(socket.getOutputStream());<br>            writer.write(scanner.nextLine() + <span class="hljs-string">&quot;\n&quot;</span>);<br>            writer.flush();<br>            System.out.println(<span class="hljs-string">&quot;数据已发送&quot;</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>Java学习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>生产者消费者的一个例子</title>
     <link href="/2023/01/04/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90/"/>
     <url>/2023/01/04/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90/</url>
@@ -15,6 +36,8 @@
     <tags>
       
       <tag>Java</tag>
+      
+      <tag>Java学习</tag>
       
       <tag>JavaSE</tag>
       
@@ -37,6 +60,8 @@
       
       <tag>Java</tag>
       
+      <tag>Java学习</tag>
+      
       <tag>JavaSE</tag>
       
     </tags>
@@ -58,6 +83,8 @@
       
       <tag>Java</tag>
       
+      <tag>Java学习</tag>
+      
       <tag>JavaSE</tag>
       
     </tags>
@@ -78,6 +105,8 @@
     <tags>
       
       <tag>Java</tag>
+      
+      <tag>Java学习</tag>
       
       <tag>JavaSE</tag>
       
